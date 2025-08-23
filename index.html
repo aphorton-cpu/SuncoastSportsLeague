@@ -1,0 +1,937 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Suncoast Sports League — Baseball&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="description" content="Suncoast Sports League website with registration, schedule, standings, and stats." /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--bg: #0b0b0b; <span class="Apple-converted-space">        </span>/* black-ish */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--panel: #141414;<span class="Apple-converted-space">      </span>/* dark panel */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--muted: #1f1f1f;<span class="Apple-converted-space">      </span>/* dark muted */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--text: #f3f4f6; <span class="Apple-converted-space">      </span>/* gray-100 */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--subtext: #9ca3af;<span class="Apple-converted-space">    </span>/* gray-400 */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--brand: #f97316;<span class="Apple-converted-space">      </span>/* orange-500 */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--accent: #fb923c; <span class="Apple-converted-space">    </span>/* orange-400 */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--warn: #f59e0b; <span class="Apple-converted-space">      </span>/* amber-500 */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--danger: #ef4444; <span class="Apple-converted-space">    </span>/* red-500 */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--ok: #22c55e; <span class="Apple-converted-space">        </span>/* green-500 */</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--rounded: 18px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--shadow: 0 10px 30px rgba(0,0,0,.35);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>* { box-sizing: border-box; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>html, body { height: 100%; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font: 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: var(--text);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: linear-gradient(180deg, #000, #0b0b0b 160px) fixed;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>a { color: var(--accent); text-decoration: none; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>a:hover { text-decoration: underline; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Layout */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>header {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>position: sticky; top: 0; z-index: 50;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(0, 0, 0, 0.9);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>backdrop-filter: blur(8px);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-bottom: 2px solid var(--brand);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.nav {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 1200px; margin: 0 auto; padding: 14px 20px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex; gap: 16px; align-items: center; justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.brand { display: flex; align-items: center; gap: 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.brand-logo { width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fb923c, #7c2d12); box-shadow: var(--shadow); display:flex; align-items:center; justify-content:center; font-weight:800; color:#0b0b0b; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.brand h1 { margin: 0; font-size: 20px; letter-spacing: 0.4px; color: var(--brand); font-weight: 900; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>nav ul { list-style: none; display: flex; gap: 10px; margin: 0; padding: 0; flex-wrap: wrap; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>nav a { display: inline-block; padding: 8px 12px; border-radius: 999px; color: var(--text); border: 1px solid transparent; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>nav a.active { background: var(--brand); color: #000; border-color: #3a240c; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>nav a:hover { background: #121212; border-color: #292929; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>main { max-width: 1200px; margin: 24px auto; padding: 0 20px 60px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.hero { background: linear-gradient(135deg, rgba(249,115,22,.10), rgba(251,146,60,.10)); border: 1px solid #222; padding: 28px; border-radius: var(--rounded); box-shadow: var(--shadow); display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: center; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.hero h2 { margin: 0 0 6px; font-size: 28px; color: var(--brand); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.hero p { margin: 4px 0 16px; color: var(--subtext); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.hero .cta { display: flex; gap: 12px; flex-wrap: wrap; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn { background: var(--brand); border: none; color: #0b0b0b; padding: 10px 14px; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 18px rgba(249,115,22,.25); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn.secondary { background: #0b0b0b; color: var(--text); border: 1px solid #2a2a2a; box-shadow: none; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn.warn { background: var(--warn); color: #18181b; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn.danger { background: var(--danger); color: #fff; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn:disabled { opacity: .6; cursor: not-allowed; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.panel { background: var(--panel); border: 1px solid #1f1f1f; border-radius: var(--rounded); box-shadow: var(--shadow); padding: 18px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.grid { display: grid; gap: 16px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>@media (max-width: 900px) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.hero { grid-template-columns: 1fr; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.grid-2, .grid-3 { grid-template-columns: 1fr; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>h3 { margin: 4px 0 10px; font-size: 18px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.muted { color: var(--subtext); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Forms */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.field { display: grid; gap: 6px; margin-bottom: 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.field label { color: var(--subtext); font-size: 13px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.input, select, textarea {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%; background: #0a0a0a; color: var(--text);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid #1f1f1f; border-radius: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 10px 12px; outline: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(251,146,60,.15); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.help { font-size: 12px; color: var(--subtext); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip { padding: 4px 8px; border-radius: 999px; background: #0a0a0a; border: 1px solid #1f1f1f; color: var(--subtext); font-size: 12px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Tables */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.table-wrap { overflow: auto; border: 1px solid #1f1f1f; border-radius: 14px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>table { width: 100%; border-collapse: collapse; min-width: 620px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>thead th { position: sticky; top: 0; background: #0a0a0a; text-align: left; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #9aa6b2; border-bottom: 1px solid #1f1f1f; padding: 10px 12px; cursor: pointer; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tbody td { border-bottom: 1px solid #1f1f1f; padding: 10px 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tbody tr:hover { background: #121212; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.align-r { text-align: right; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Cards */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card { background: #0a0a0a; border: 1px solid #1f1f1f; border-radius: 14px; padding: 14px; display: grid; gap: 8px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Footer */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>footer { border-top: 1px solid #1f1f1f; padding: 18px 20px; color: var(--subtext); text-align: center; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Utilities */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.hidden { display: none !important; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.flex { display: flex; gap: 10px; align-items: center; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.right { margin-left: auto; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.sep { height: 1px; background: #1f1f1f; margin: 12px 0; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.tag { font-size: 11px; background: #121212; border: 1px solid #1f1f1f; padding: 2px 6px; border-radius: 999px; color: #9aa6b2; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;a href="#content" class="chip" style="position:absolute;left:-9999px;top:auto;"&gt;Skip to content&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="nav"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="brand"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="brand-logo" aria-hidden="true"&gt;⚾&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Suncoast Sports League&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;nav aria-label="Primary"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li&gt;&lt;a href="#home" data-link&gt;Home&lt;/a&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li&gt;&lt;a href="#register" data-link&gt;Register&lt;/a&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li&gt;&lt;a href="#schedule" data-link&gt;Schedule&lt;/a&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li&gt;&lt;a href="#standings" data-link&gt;Standings&lt;/a&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li&gt;&lt;a href="#stats" data-link&gt;Stats&lt;/a&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li&gt;&lt;a href="#teams" data-link&gt;Teams&lt;/a&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;li&gt;&lt;a href="#admin" data-link class="right"&gt;Admin&lt;/a&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/nav&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;main id="content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- HOME --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="home" class="grid hero"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Welcome to the Suncoast Sports League&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Community baseball built on development, fun, and fair play. Register your player, follow the schedule, track live standings, and explore team stats — all in one place.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="cta"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;a class="btn" href="#register" data-link&gt;Register a Player&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;a class="btn secondary" href="#schedule" data-link&gt;View Schedule&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p class="help"&gt;Tip: This demo stores data in your browser using localStorage. You can export/import your league data in Admin → Data.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="panel grid grid-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Next Games&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div id="homeNextGames" class="grid"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Leaders&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="flex"&gt;&lt;strong&gt;Best Records&lt;/strong&gt;&lt;span class="tag"&gt;Top 3&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div id="leaderRecords" class="grid"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="flex"&gt;&lt;strong&gt;Run Differential&lt;/strong&gt;&lt;span class="tag"&gt;Top 3&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div id="leaderRD" class="grid"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- REGISTER --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="register" class="panel hidden" aria-labelledby="registerTitle"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2 id="registerTitle"&gt;Player Registration&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;form id="registrationForm" autocomplete="on"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="playerName"&gt;Player Full Name&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input class="input" id="playerName" name="playerName" required placeholder="Jane Doe" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="dob"&gt;Date of Birth&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input class="input" id="dob" name="dob" type="date" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="division"&gt;Division&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="division" name="division" required&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="guardian"&gt;Parent/Guardian&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input class="input" id="guardian" name="guardian" required placeholder="John Doe" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="email"&gt;Email&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input class="input" id="email" name="email" type="email" required placeholder="name@example.com" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="phone"&gt;Phone&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input class="input" id="phone" name="phone" type="tel" required placeholder="(555) 555-5555" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="preferredTeam"&gt;Preferred Team (optional)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="preferredTeam" name="preferredTeam"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="help"&gt;Team placement is subject to roster availability.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="jerseySize"&gt;Jersey Size&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="jerseySize" required&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value=""&gt;Choose…&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;option&gt;YS&lt;/option&gt;&lt;option&gt;YM&lt;/option&gt;&lt;option&gt;YL&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;option&gt;AS&lt;/option&gt;&lt;option&gt;AM&lt;/option&gt;&lt;option&gt;AL&lt;/option&gt;&lt;option&gt;AXL&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label for="notes"&gt;Medical or Other Notes (optional)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;textarea id="notes" rows="3" placeholder="Allergies, uniform accommodations, etc."&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="flex" style="gap:8px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="checkbox" id="waiver" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span&gt;I agree to the &lt;a href="#" onclick="alert('Provide league waiver here.');return false;"&gt;League Waiver&lt;/a&gt;.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="right chip"&gt;Fee: $150&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sep"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn" type="submit"&gt;Submit Registration&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn secondary" type="reset"&gt;Reset&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span id="regMsg" class="help"&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- SCHEDULE --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="schedule" class="panel hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex" style="justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Game Schedule&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="muted"&gt;Filter by division, team, and date range.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex" style="gap:8px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;select id="filterDivision"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;select id="filterTeam"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input class="input" type="date" id="filterFrom" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input class="input" type="date" id="filterTo" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn secondary" id="clearFilters"&gt;Clear&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="table-wrap" style="margin-top:12px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;table aria-describedby="scheduleHelp"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th data-sort="date"&gt;Date/Time&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th data-sort="division"&gt;Division&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th data-sort="home"&gt;Home&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th data-sort="away"&gt;Away&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th data-sort="field"&gt;Field&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th data-sort="status" class="align-r"&gt;Status&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tbody id="scheduleBody"&gt;&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;p id="scheduleHelp" class="help"&gt;Admins can add/modify games under the Admin tab.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- STANDINGS --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="standings" class="panel hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex" style="justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Standings&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="muted"&gt;Win = 2 pts • Tie = 1 pt • Loss = 0 pts&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex" style="gap:8px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;select id="standingsDivision"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn secondary" id="exportStandingsCsv"&gt;Export CSV&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="table-wrap" style="margin-top:12px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th&gt;#&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th data-sort="team"&gt;Team&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="gp"&gt;GP&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="w"&gt;W&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="l"&gt;L&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="t"&gt;T&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="pts"&gt;Pts&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="rf"&gt;RF&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="ra"&gt;RA&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;th class="align-r" data-sort="rd"&gt;RD&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tbody id="standingsBody"&gt;&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- STATS --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="stats" class="panel hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex" style="justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Statistics&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="muted"&gt;Team-level metrics computed from recorded scores. (Optional player box scores can be added later.)&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex" style="gap:8px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;select id="statsDivision"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn secondary" id="exportStatsJson"&gt;Export JSON&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid grid-3" id="statsCards" style="margin-top:12px;"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- TEAMS --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="teams" class="panel hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="flex" style="justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Teams &amp; Rosters&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="muted"&gt;Search, filter, and print team rosters.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex" style="gap:8px; flex-wrap: wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;select id="teamsDivision"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;input class="input" id="teamSearch" placeholder="Search teams…" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn secondary" id="printRosters"&gt;Print&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid grid-3" id="teamCards" style="margin-top:12px;"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- ADMIN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="admin" class="panel hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2&gt;Admin&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;p class="muted"&gt;Manage divisions, teams, schedule, results and data. These tools update the same data seen across the site. No login in this demo.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid grid-3" style="margin-top:12px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Divisions&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;form id="addDivisionForm" class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;label for="newDivision"&gt;New Division Name&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;input id="newDivision" class="input" placeholder="e.g., 10U" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn" type="submit"&gt;Add Division&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="sep"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div id="divisionsList" class="grid"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Teams&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;form id="addTeamForm" class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;label for="teamName"&gt;Team Name&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;input id="teamName" class="input" placeholder="Sharks" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;label for="teamDivision"&gt;Division&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;select id="teamDivision" required&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;label for="coach"&gt;Coach&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;input id="coach" class="input" placeholder="Coach Lee" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn" type="submit"&gt;Add Team&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="sep"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div id="teamsList" class="grid"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Schedule Game&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;form id="addGameForm" class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="gameDate"&gt;Date &amp; Time&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input id="gameDate" type="datetime-local" class="input" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="gameField"&gt;Field&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input id="gameField" class="input" placeholder="Heritage Harbour" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="gameDivision"&gt;Division&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;select id="gameDivision" required&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="gameRound"&gt;Round (optional)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input id="gameRound" class="input" placeholder="Regular, Playoffs…" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="homeTeam"&gt;Home Team&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;select id="homeTeam" required&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="awayTeam"&gt;Away Team&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;select id="awayTeam" required&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn" type="submit"&gt;Add to Schedule&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Record Result&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;form id="recordForm" class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;label for="recordGame"&gt;Select Game&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;select id="recordGame" required&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="homeScore"&gt;Home Score&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input id="homeScore" class="input" type="number" min="0" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="field"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="awayScore"&gt;Away Score&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input id="awayScore" class="input" type="number" min="0" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn" type="submit"&gt;Save Result&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Data&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;button class="btn secondary" id="exportJson"&gt;Export JSON&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;label class="btn secondary" style="cursor:pointer;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Import JSON &lt;input type="file" id="importJson" accept="application/json" style="display:none" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;button class="btn warn" id="seedDemo"&gt;Seed Demo&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;button class="btn danger" id="resetAll"&gt;Reset All&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="help"&gt;Export a backup before resetting. Import replaces your current data.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/main&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;footer&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>© &lt;span id="year"&gt;&lt;/span&gt; Suncoast Sports League. All rights reserved. This is a demo template — replace branding and copy as needed.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/footer&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"use strict";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/**</p>
+<p class="p1"><span class="Apple-converted-space">     </span>* SUNCOAST SPORTS LEAGUE — single-file demo app (localStorage only).</p>
+<p class="p1"><span class="Apple-converted-space">     </span>* Replace any of this with your own backend integration.</p>
+<p class="p1"><span class="Apple-converted-space">     </span>*/</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const $ = (sel, el = document) =&gt; el.querySelector(sel);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const $$ = (sel, el = document) =&gt; Array.from(el.querySelectorAll(sel));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const storeKey = 'suncoast-sports-league-v1';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let db = {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>divisions: ["9U", "10U", "11U", "12U"],</p>
+<p class="p1"><span class="Apple-converted-space">      </span>teams: [],<span class="Apple-converted-space">      </span>// {id, name, division, coach}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>players: [],<span class="Apple-converted-space">    </span>// {id, name, dob, guardian, email, phone, division, teamId?, jersey, notes}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>games: [] <span class="Apple-converted-space">      </span>// {id, dateISO, field, division, round, homeId, awayId, status: 'scheduled'|'final', score?:{home,away}}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function uid(prefix = '') {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return prefix + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function load() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const raw = localStorage.getItem(storeKey);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (raw) db = JSON.parse(raw);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} catch(e) { console.warn('Failed to load store', e); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function save() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>localStorage.setItem(storeKey, JSON.stringify(db));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderAll();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function byId(list, id) { return list.find(x =&gt; x.id === id); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// NAV</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function routeFromHash() { return location.hash.replace('#', '') || 'home'; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function setActiveNav(hash) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$$('nav a[data-link]').forEach(a =&gt; a.classList.toggle('active', a.getAttribute('href') === '#' + hash));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function showSection(hash) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$$('main &gt; section').forEach(s =&gt; s.classList.add('hidden'));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const el = $('#' + hash);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (el) el.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>setActiveNav(hash);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// RENDER HELPERS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function fillSelect(selectEl, values, { includeAll=false, allLabel='All', valueKey, labelKey }={}) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const opts = [];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (includeAll) opts.push(`&lt;option value=""&gt;${allLabel}&lt;/option&gt;`);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (const v of values) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (typeof v === 'string') opts.push(`&lt;option&gt;${v}&lt;/option&gt;`);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else opts.push(`&lt;option value="${v[valueKey]}"&gt;${v[labelKey]}&lt;/option&gt;`);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>selectEl.innerHTML = opts.join('');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function dateFmt(iso) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const d = new Date(iso);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return d.toLocaleString([], { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function download(filename, content, type='text/plain') {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const a = document.createElement('a');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>a.href = URL.createObjectURL(new Blob([content], {type}));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>a.download = filename;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>a.click();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>URL.revokeObjectURL(a.href);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// HOME</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderHomeNextGames() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const upcoming = db.games.filter(g =&gt; g.status !== 'final').sort((a,b)=&gt; new Date(a.dateISO)-new Date(b.dateISO)).slice(0,4);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const box = $('#homeNextGames');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box.innerHTML = upcoming.map(g =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const home = byId(db.teams, g.homeId)?.name || 'TBD';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const away = byId(db.teams, g.awayId)?.name || 'TBD';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return `&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="flex"&gt;&lt;strong&gt;${home}&lt;/strong&gt;&lt;span class="muted"&gt;vs&lt;/span&gt;&lt;strong&gt;${away}&lt;/strong&gt;&lt;span class="right chip"&gt;${g.division}&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="flex"&gt;&lt;span&gt;${dateFmt(g.dateISO)}&lt;/span&gt;&lt;span class="right"&gt;${g.field}&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}).join('') || '&lt;div class="help"&gt;No upcoming games.&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function computeStandings(division) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const teams = db.teams.filter(t =&gt; !division || t.division === division);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const stats = teams.map(t =&gt; ({ id: t.id, name: t.name, division: t.division, gp:0,w:0,l:0,t:0,rf:0,ra:0 }));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const map = Object.fromEntries(stats.map(s =&gt; [s.id, s]));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (const g of db.games) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (g.status !== 'final') continue;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (division &amp;&amp; g.division !== division) continue;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const hs = g.score?.home ?? 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const as = g.score?.away ?? 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const h = map[g.homeId];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const a = map[g.awayId];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!h || !a) continue;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h.gp++; a.gp++;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h.rf += hs; h.ra += as;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>a.rf += as; a.ra += hs;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (hs &gt; as) { h.w++; a.l++; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else if (hs &lt; as) { a.w++; h.l++; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else { h.t++; a.t++; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for (const s of stats) s.pts = s.w*2 + s.t*1, s.rd = s.rf - s.ra;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>stats.sort((x,y)=&gt; y.pts - x.pts || y.rd - x.rd || y.rf - x.rf || x.name.localeCompare(y.name));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return stats;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderLeaders() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const all = computeStandings();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const topPts = all.slice(0,3).map(s=&gt;`&lt;div class="flex"&gt;&lt;span&gt;${s.name}&lt;/span&gt;&lt;span class="right"&gt;${s.w}-${s.l}-${s.t} • ${s.pts} pts&lt;/span&gt;&lt;/div&gt;`).join('') || '&lt;div class="help"&gt;No data yet.&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#leaderRecords').innerHTML = topPts;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const topRD = [...all].sort((a,b)=&gt; b.rd-a.rd).slice(0,3).map(s=&gt;`&lt;div class="flex"&gt;&lt;span&gt;${s.name}&lt;/span&gt;&lt;span class="right"&gt;RD ${s.rd}&lt;/span&gt;&lt;/div&gt;`).join('') || '&lt;div class="help"&gt;No data yet.&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#leaderRD').innerHTML = topRD;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// REGISTER</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderRegistrationForm() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#division'), db.divisions);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#preferredTeam'), [{id:'',name:'No Preference'}, ...db.teams], { valueKey:'id', labelKey:'name' });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// SCHEDULE</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let scheduleSortKey = 'date';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderSchedule() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#filterDivision'), ['All Divisions', ...db.divisions], { includeAll:false });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#filterTeam'), [{id:'',name:'All Teams'}, ...db.teams], { valueKey:'id', labelKey:'name' });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const divSel = $('#filterDivision').value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const teamSel = $('#filterTeam').value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const from = $('#filterFrom').value ? new Date($('#filterFrom').value) : null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const to = $('#filterTo').value ? new Date($('#filterTo').value) : null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>let rows = db.games.slice();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (divSel &amp;&amp; divSel !== 'All Divisions') rows = rows.filter(g =&gt; g.division === divSel);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (teamSel) rows = rows.filter(g =&gt; g.homeId === teamSel || g.awayId === teamSel);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (from) rows = rows.filter(g =&gt; new Date(g.dateISO) &gt;= from);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (to) rows = rows.filter(g =&gt; new Date(g.dateISO) &lt;= to);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>rows.sort((a,b)=&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>switch(scheduleSortKey){</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'division': return a.division.localeCompare(b.division);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'home': return (byId(db.teams, a.homeId)?.name||'').localeCompare(byId(db.teams, b.homeId)?.name||'');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'away': return (byId(db.teams, a.awayId)?.name||'').localeCompare(byId(db.teams, b.awayId)?.name||'');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'field': return a.field.localeCompare(b.field);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'status': return (a.status||'').localeCompare(b.status||'');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>default: return new Date(a.dateISO) - new Date(b.dateISO);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#scheduleBody').innerHTML = rows.map(g =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const home = byId(db.teams, g.homeId)?.name || 'TBD';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const away = byId(db.teams, g.awayId)?.name || 'TBD';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const status = g.status === 'final' ? `${g.score.home}-${g.score.away} Final` : 'Scheduled';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return `&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${dateFmt(g.dateISO)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${g.division}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${home}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${away}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${g.field}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;td class="align-r"&gt;${status}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/tr&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}).join('') || `&lt;tr&gt;&lt;td colspan="6" class="muted"&gt;No games found.&lt;/td&gt;&lt;/tr&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// STANDINGS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let standingsSortKey = 'pts';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderStandings() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#standingsDivision'), db.divisions);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const div = $('#standingsDivision').value || db.divisions[0];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const stats = computeStandings(div);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const sorted = stats.sort((a,b)=&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>switch(standingsSortKey){</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'team': return a.name.localeCompare(b.name);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'gp': return b.gp - a.gp;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'w': return b.w - a.w;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'l': return a.l - b.l;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 't': return b.t - a.t;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'pts': return b.pts - a.pts;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'rf': return b.rf - a.rf;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'ra': return a.ra - b.ra;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>case 'rd': return b.rd - a.rd;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>default: return b.pts - a.pts;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#standingsBody').innerHTML = sorted.map((s,i)=&gt; `&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td&gt;${i+1}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td&gt;${s.name}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.gp}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.w}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.l}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.t}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.pts}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.rf}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.ra}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="align-r"&gt;${s.rd}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/tr&gt;`).join('') || `&lt;tr&gt;&lt;td colspan="10" class="muted"&gt;No results in this division yet.&lt;/td&gt;&lt;/tr&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// STATS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderStats() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#statsDivision'), db.divisions);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const div = $('#statsDivision').value || db.divisions[0];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const stats = computeStandings(div);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const leaders = {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bestRecord: stats[0],</p>
+<p class="p1"><span class="Apple-converted-space">        </span>mostRuns: [...stats].sort((a,b)=&gt; b.rf - a.rf)[0],</p>
+<p class="p1"><span class="Apple-converted-space">        </span>stingiest: [...stats].sort((a,b)=&gt; a.ra - b.ra)[0],</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bestRD: [...stats].sort((a,b)=&gt; b.rd - a.rd)[0],</p>
+<p class="p1"><span class="Apple-converted-space">      </span>};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const cards = [</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ title: 'Best Record', v: leaders.bestRecord },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ title: 'Most Runs For', v: leaders.mostRuns },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ title: 'Fewest Runs Against', v: leaders.stingiest },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ title: 'Best Run Differential', v: leaders.bestRD },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>].filter(x=&gt;x.v);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#statsCards').innerHTML = cards.map(c =&gt; `&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex"&gt;&lt;strong&gt;${c.title}&lt;/strong&gt;&lt;span class="right tag"&gt;${div}&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size:20px; font-weight:800;"&gt;${c.v.name}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="muted"&gt;W-L-T: ${c.v.w}-${c.v.l}-${c.v.t} &amp;nbsp; • &amp;nbsp; RF: ${c.v.rf} &amp;nbsp; • &amp;nbsp; RA: ${c.v.ra} &amp;nbsp; • &amp;nbsp; RD: ${c.v.rd}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;`).join('') || '&lt;div class="help"&gt;No stats yet. Record some results in Admin → Record Result.&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// TEAMS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderTeams() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#teamsDivision'), ['All Divisions', ...db.divisions]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const div = $('#teamsDivision').value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const q = ($('#teamSearch').value||'').toLowerCase();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const teams = db.teams.filter(t =&gt; (!div || div==='All Divisions' || t.division===div) &amp;&amp; (!q || t.name.toLowerCase().includes(q)));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const cards = teams.map(t =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const roster = db.players.filter(p =&gt; p.teamId === t.id);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return `&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="flex"&gt;&lt;strong&gt;${t.name}&lt;/strong&gt;&lt;span class="tag"&gt;${t.division}&lt;/span&gt;&lt;span class="right muted"&gt;Coach: ${t.coach||'—'}&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="sep"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="help"&gt;Roster (${roster.length})&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;ol style="margin:0; padding-left:18px;"&gt;${roster.map(p=&gt;`&lt;li&gt;${p.name} &lt;span class=\"muted\"&gt;(${p.jersey||'N/A'})&lt;/span&gt;&lt;/li&gt;`).join('') || '&lt;div class="muted"&gt;No players yet.&lt;/div&gt;'}&lt;/ol&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}).join('') || '&lt;div class="help"&gt;No teams yet. Add some under Admin → Teams.&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#teamCards').innerHTML = cards;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ADMIN — DIVISIONS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderDivisionsAdmin() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const list = db.divisions.map(d =&gt; `&lt;div class="flex"&gt;&lt;span&gt;${d}&lt;/span&gt;&lt;button class="btn secondary right" data-del-division="${d}"&gt;Remove&lt;/button&gt;&lt;/div&gt;`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#divisionsList').innerHTML = list || '&lt;div class="help"&gt;No divisions yet.&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#teamDivision'), db.divisions);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#gameDivision'), db.divisions);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ADMIN — TEAMS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderTeamsAdmin() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const list = db.teams.map(t =&gt; `&lt;div class="flex"&gt;&lt;span&gt;${t.name} &lt;span class="tag"&gt;${t.division}&lt;/span&gt;&lt;/span&gt;&lt;button class="btn secondary right" data-del-team="${t.id}"&gt;Remove&lt;/button&gt;&lt;/div&gt;`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#teamsList').innerHTML = list || '&lt;div class="help"&gt;No teams yet.&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// dependent selects</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const div = $('#gameDivision').value || db.divisions[0];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const filtered = db.teams.filter(x =&gt; x.division === div);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#homeTeam'), filtered, { valueKey:'id', labelKey:'name'});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#awayTeam'), filtered, { valueKey:'id', labelKey:'name'});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Register form team list</p>
+<p class="p1"><span class="Apple-converted-space">      </span>fillSelect($('#preferredTeam'), [{id:'',name:'No Preference'}, ...db.teams], { valueKey:'id', labelKey:'name' });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ADMIN — SCHEDULE</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderRecordSelect() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const options = db.games.map(g =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const home = byId(db.teams, g.homeId)?.name || 'TBD';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const away = byId(db.teams, g.awayId)?.name || 'TBD';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const label = `${dateFmt(g.dateISO)} — ${g.division} — ${home} vs ${away}`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return `&lt;option value="${g.id}"&gt;${label}&lt;/option&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}).join('');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#recordGame').innerHTML = options || '&lt;option value=""&gt;No games scheduled&lt;/option&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// EXPORTS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function exportStandingsCsv() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const div = $('#standingsDivision').value || db.divisions[0];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const stats = computeStandings(div);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const header = ['Rank','Team','GP','W','L','T','Pts','RF','RA','RD'];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const rows = stats.map((s,i)=&gt;[i+1,s.name,s.gp,s.w,s.l,s.t,s.pts,s.rf,s.ra,s.rd]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const csv = [header, ...rows].map(r=&gt;r.join(',')).join('</p>
+<p class="p1">');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>download(`standings_${div}.csv`, csv, 'text/csv');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function exportJson() { download('suncoast_sports_league_backup.json', JSON.stringify(db, null, 2), 'application/json'); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function importJson(file) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const reader = new FileReader();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>reader.onload = e =&gt; { try { db = JSON.parse(e.target.result); save(); alert('Import complete.'); } catch(err) { alert('Invalid JSON.'); } };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>reader.readAsText(file);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function seedDemo() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>db.divisions = ["9U", "10U"]; db.teams = []; db.players = []; db.games = [];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const tigers = { id: uid('t_'), name: 'Tigers', division: '10U', coach: 'B. Collins' };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const sharks = { id: uid('t_'), name: 'Sharks', division: '10U', coach: 'L. Lee' };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const eagles = { id: uid('t_'), name: 'Eagles', division: '9U', coach: 'D. Cruz' };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const bears<span class="Apple-converted-space">  </span>= { id: uid('t_'), name: 'Bears',<span class="Apple-converted-space">  </span>division: '9U', coach: 'K. Patel' };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>db.teams.push(tigers, sharks, eagles, bears);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Players (short list)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>db.players.push(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('p_'), name:'Alex Johnson', dob:'2015-04-21', guardian:'M. Johnson', email:'mj@example.com', phone:'555-1111', division:'10U', teamId: tigers.id, jersey:'AM' },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('p_'), name:'Sam Green',<span class="Apple-converted-space">    </span>dob:'2015-10-05', guardian:'R. Green', email:'rg@example.com', phone:'555-2222', division:'10U', teamId: tigers.id, jersey:'YM' },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('p_'), name:'Leo Park', <span class="Apple-converted-space">    </span>dob:'2016-02-12', guardian:'H. Park',<span class="Apple-converted-space">  </span>email:'hp@example.com', phone:'555-3333', division:'10U', teamId: sharks.id, jersey:'YL' },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('p_'), name:'Nina Diaz',<span class="Apple-converted-space">    </span>dob:'2016-07-30', guardian:'C. Diaz',<span class="Apple-converted-space">  </span>email:'cd@example.com', phone:'555-4444', division:'9U', teamId: eagles.id, jersey:'YS' }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Schedule (today + offsets)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const now = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>function addDays(d){ const x=new Date(now); x.setDate(x.getDate()+d); return x; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>db.games.push(</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('g_'), dateISO: addDays(1).toISOString(), field:'Field A', division:'10U', round:'Regular', homeId:tigers.id, awayId:sharks.id, status:'scheduled' },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('g_'), dateISO: addDays(2).toISOString(), field:'Field B', division:'9U',<span class="Apple-converted-space">  </span>round:'Regular', homeId:eagles.id, awayId:bears.id,<span class="Apple-converted-space">  </span>status:'scheduled' },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('g_'), dateISO: addDays(-2).toISOString(), field:'Field A', division:'10U', round:'Regular', homeId:tigers.id, awayId:sharks.id, status:'final', score:{home:7, away:5} },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ id: uid('g_'), dateISO: addDays(-1).toISOString(), field:'Field B', division:'9U',<span class="Apple-converted-space">  </span>round:'Regular', homeId:eagles.id, awayId:bears.id,<span class="Apple-converted-space">  </span>status:'final', score:{home:3, away:3} }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Seeded demo data!');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// EVENT BINDINGS</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function bindEvents() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Nav links keep SPA feel</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$$('a[data-link]').forEach(a =&gt; a.addEventListener('click', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const href = a.getAttribute('href');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (href?.startsWith('#')) { e.preventDefault(); history.pushState({}, '', href); onRouteChange(); }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>window.addEventListener('popstate', onRouteChange);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Registration submit</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#registrationForm').addEventListener('submit', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const name = $('#playerName').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const dob = $('#dob').value; const guardian = $('#guardian').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const email = $('#email').value.trim(); const phone = $('#phone').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const division = $('#division').value; const teamId = $('#preferredTeam').value || null;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const jersey = $('#jerseySize').value; const notes = $('#notes').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!$('#waiver').checked) return alert('Please agree to the waiver.');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const p = { id: uid('p_'), name, dob, guardian, email, phone, division, teamId, jersey, notes };</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db.players.push(p);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>$('#regMsg').textContent = 'Registration received! You will receive a confirmation email.';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>(e.target).reset();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Schedule filters and sorting</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#clearFilters').addEventListener('click', ()=&gt;{ $('#filterDivision').value=''; $('#filterTeam').value=''; $('#filterFrom').value=''; $('#filterTo').value=''; renderSchedule(); });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$$('#schedule thead th').forEach(th =&gt; th.addEventListener('click', ()=&gt;{ scheduleSortKey = th.dataset.sort || 'date'; renderSchedule(); }));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Standings</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#standingsDivision').addEventListener('change', renderStandings);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#exportStandingsCsv').addEventListener('click', exportStandingsCsv);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$$('#standings thead th[data-sort]').forEach(th =&gt; th.addEventListener('click', ()=&gt;{ standingsSortKey = th.dataset.sort; renderStandings(); }));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Stats</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#statsDivision').addEventListener('change', renderStats);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#exportStatsJson').addEventListener('click', ()=&gt; download('stats.json', JSON.stringify(computeStandings($('#statsDivision').value||db.divisions[0]), null, 2), 'application/json'));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Teams</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#teamsDivision').addEventListener('change', renderTeams);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#teamSearch').addEventListener('input', renderTeams);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#printRosters').addEventListener('click', ()=&gt; window.print());</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Admin — Divisions</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#addDivisionForm').addEventListener('submit', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const name = $('#newDivision').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!name) return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (db.divisions.includes(name)) return alert('Division already exists.');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db.divisions.push(name); $('#newDivision').value=''; save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#divisionsList').addEventListener('click', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const btn = e.target.closest('[data-del-division]'); if (!btn) return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const d = btn.dataset.delDivision;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (db.teams.some(t =&gt; t.division===d)) return alert('Remove teams in this division first.');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db.divisions = db.divisions.filter(x=&gt;x!==d); save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Admin — Teams</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#addTeamForm').addEventListener('submit', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const name = $('#teamName').value.trim(); const division = $('#teamDivision').value; const coach = $('#coach').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!name || !division) return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db.teams.push({ id: uid('t_'), name, division, coach });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>$('#teamName').value=''; $('#coach').value=''; save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#teamsList').addEventListener('click', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const btn = e.target.closest('[data-del-team]'); if (!btn) return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const id = btn.dataset.delTeam;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (db.players.some(p =&gt; p.teamId===id)) return alert('Remove or reassign players first.');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db.teams = db.teams.filter(t=&gt;t.id!==id);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db.games = db.games.filter(g=&gt; g.homeId!==id &amp;&amp; g.awayId!==id);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Admin — Schedule</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#gameDivision').addEventListener('change', renderTeamsAdmin);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#addGameForm').addEventListener('submit', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const dateISO = new Date($('#gameDate').value).toISOString();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const field = $('#gameField').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const division = $('#gameDivision').value; const round = $('#gameRound').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const homeId = $('#homeTeam').value; const awayId = $('#awayTeam').value;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (homeId === awayId) return alert('Home and Away cannot be the same team.');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>db.games.push({ id: uid('g_'), dateISO, field, division, round, homeId, awayId, status:'scheduled' });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.target.reset(); save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Admin — Record</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#recordForm').addEventListener('submit', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const id = $('#recordGame').value; const g = byId(db.games, id); if (!g) return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const home = parseInt($('#homeScore').value, 10); const away = parseInt($('#awayScore').value, 10);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>g.status = 'final'; g.score = { home, away }; save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Data</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#exportJson').addEventListener('click', exportJson);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#importJson').addEventListener('change', e =&gt; { const file = e.target.files?.[0]; if (file) importJson(file); e.target.value = ''; });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#seedDemo').addEventListener('click', seedDemo);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#resetAll').addEventListener('click', ()=&gt;{ if (confirm('Erase all data?')) { localStorage.removeItem(storeKey); db = { divisions:[], teams:[], players:[], games:[] }; save(); }});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Sorting handlers already attached above.</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function onRouteChange() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const hash = routeFromHash();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showSection(hash);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderAll();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderAll() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Shared</p>
+<p class="p1"><span class="Apple-converted-space">      </span>$('#year').textContent = new Date().getFullYear();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Panels</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderHomeNextGames();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderLeaders();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderRegistrationForm();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderSchedule();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderStandings();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderStats();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderTeams();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderDivisionsAdmin();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderTeamsAdmin();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderRecordSelect();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// INIT</p>
+<p class="p1"><span class="Apple-converted-space">    </span>load();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>bindEvents();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>onRouteChange();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
