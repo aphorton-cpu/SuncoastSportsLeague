@@ -168,75 +168,68 @@
 
     <!-- REGISTER -->
     <section id="register" class="panel hidden" aria-labelledby="registerTitle">
-      <h2 id="registerTitle">Player Registration</h2>
-      <form id="registrationForm" autocomplete="on">
-        <div class="grid grid-3">
-          <div class="field">
-            <label for="playerName">Player Full Name</label>
-            <input class="input" id="playerName" name="playerName" required placeholder="Jane Doe" />
-          </div>
-          <div class="field">
-            <label for="dob">Date of Birth</label>
-            <input class="input" id="dob" name="dob" type="date" required />
-          </div>
-          <div class="field">
-            <label for="division">Division</label>
-            <select id="division" name="division" required></select>
-          </div>
-        </div>
+  <h2 id="registerTitle">Team Registration</h2>
+  <form id="registrationForm" autocomplete="on">
+    <div class="grid grid-3">
+      <div class="field">
+        <label for="teamRegName">Team Name</label>
+        <input class="input" id="teamRegName" name="teamRegName" required placeholder="Sharks" />
+      </div>
+      <div class="field">
+        <label for="teamRegDivision">Division</label>
+        <select id="teamRegDivision" name="teamRegDivision" required></select>
+      </div>
+      <div class="field">
+        <label for="coachReg">Head Coach</label>
+        <input class="input" id="coachReg" name="coachReg" placeholder="Coach Lee" />
+      </div>
+    </div>
 
-        <div class="grid grid-3">
-          <div class="field">
-            <label for="guardian">Parent/Guardian</label>
-            <input class="input" id="guardian" name="guardian" required placeholder="John Doe" />
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input class="input" id="email" name="email" type="email" required placeholder="name@example.com" />
-          </div>
-          <div class="field">
-            <label for="phone">Phone</label>
-            <input class="input" id="phone" name="phone" type="tel" required placeholder="(555) 555-5555" />
-          </div>
-        </div>
+    <div class="grid grid-3">
+      <div class="field">
+        <label for="managerReg">Team Manager</label>
+        <input class="input" id="managerReg" name="managerReg" placeholder="Jamie Rivera" />
+      </div>
+      <div class="field">
+        <label for="emailReg">Contact Email</label>
+        <input class="input" id="emailReg" name="emailReg" type="email" required placeholder="name@example.com" />
+      </div>
+      <div class="field">
+        <label for="phoneReg">Contact Phone</label>
+        <input class="input" id="phoneReg" name="phoneReg" type="tel" required placeholder="(555) 555-5555" />
+      </div>
+    </div>
 
-        <div class="grid grid-2">
-          <div class="field">
-            <label for="preferredTeam">Preferred Team (optional)</label>
-            <select id="preferredTeam" name="preferredTeam"></select>
-            <span class="help">Team placement is subject to roster availability.</span>
-          </div>
-          <div class="field">
-            <label for="jerseySize">Jersey Size</label>
-            <select id="jerseySize" required>
-              <option value="">Choose…</option>
-              <option>YS</option><option>YM</option><option>YL</option>
-              <option>AS</option><option>AM</option><option>AL</option><option>AXL</option>
-            </select>
-          </div>
-        </div>
+    <div class="field">
+      <label for="rosterReg">Roster (optional)</label>
+      <textarea id="rosterReg" rows="4" placeholder="One player per line. Optional jersey size in parentheses, e.g.
+Alex Johnson (AM)
+Nina Diaz (YS)"></textarea>
+      <span class="help">We’ll create players and attach them to this team automatically from the list above.</span>
+    </div>
 
-        <div class="field">
-          <label for="notes">Medical or Other Notes (optional)</label>
-          <textarea id="notes" rows="3" placeholder="Allergies, uniform accommodations, etc."></textarea>
-        </div>
+    <div class="field">
+      <label for="notesReg">Notes (optional)</label>
+      <textarea id="notesReg" rows="3" placeholder="Uniform colors, schedule constraints, etc."></textarea>
+    </div>
 
-        <div class="flex">
-          <label class="flex" style="gap:8px">
-            <input type="checkbox" id="waiver" required />
-            <span>I agree to the <a href="#" onclick="alert('Provide league waiver here.');return false;">League Waiver</a>.</span>
-          </label>
-          <span class="right chip">Fee: $150</span>
-        </div>
+    <div class="flex">
+      <label class="flex" style="gap:8px">
+        <input type="checkbox" id="waiver" required />
+        <span>I agree to the <a href="#" onclick="alert('Provide league agreement here.');return false;">League Terms</a>.</span>
+      </label>
+      <span class="right chip">Team Fee: $500</span>
+    </div>
 
-        <div class="sep"></div>
-        <div class="flex">
-          <button class="btn" type="submit">Submit Registration</button>
-          <button class="btn secondary" type="reset">Reset</button>
-          <span id="regMsg" class="help"></span>
-        </div>
-      </form>
-    </section>
+    <div class="sep"></div>
+    <div class="flex">
+      <button class="btn" type="submit">Submit Team Registration</button>
+      <button class="btn secondary" type="reset">Reset</button>
+      <span id="regMsg" class="help"></span>
+    </div>
+  </form>
+</section>
+
 
     <!-- SCHEDULE -->
     <section id="schedule" class="panel hidden">
