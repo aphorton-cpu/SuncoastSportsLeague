@@ -48,16 +48,8 @@
     a:hover { text-decoration: underline; }
 
     /* Layout */
-    header {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(8px);
-      border-bottom: 2px solid var(--brand);
-    }
-    .nav {
-      max-width: 1200px; margin: 0 auto; padding: 14px 20px;
-      display: flex; gap: 16px; align-items: center; justify-content: space-between;
-    }
+    header { position: sticky; top: 0; z-index: 50; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(8px); border-bottom: 2px solid var(--brand); }
+    .nav { max-width: 1200px; margin: 0 auto; padding: 14px 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; }
     .brand { display: flex; align-items: center; gap: 12px; }
     .brand-logo img { height: 48px; width: auto; border-radius: 50%; box-shadow: var(--shadow); background: #fff; }
     .brand h1 { margin: 0; font-size: 20px; letter-spacing: 0.4px; color: var(--brand); font-weight: 900; }
@@ -84,10 +76,7 @@
     .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
 
-    @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; }
-      .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
     h3 { margin: 4px 0 10px; font-size: 18px; }
     .muted { color: var(--subtext); }
@@ -95,11 +84,7 @@
     /* Forms */
     .field { display: grid; gap: 6px; margin-bottom: 12px; }
     .field label { color: var(--subtext); font-size: 13px; }
-    .input, select, textarea {
-      width: 100%; background: #0a0a0a; color: var(--text);
-      border: 1px solid #1f1f1f; border-radius: 10px;
-      padding: 10px 12px; outline: none;
-    }
+    .input, select, textarea { width: 100%; background: #0a0a0a; color: var(--text); border: 1px solid #1f1f1f; border-radius: 10px; padding: 10px 12px; outline: none; }
     .input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(251,146,60,.15); }
     .help { font-size: 12px; color: var(--subtext); }
     .chip { padding: 4px 8px; border-radius: 999px; background: #0a0a0a; border: 1px solid #1f1f1f; color: var(--subtext); font-size: 12px; }
@@ -357,7 +342,7 @@
     <!-- ADMIN -->
     <section id="admin" class="panel hidden">
       <h2>Admin</h2>
-      <p class="muted">Manage divisions, teams, schedule, results and data. These tools update the same data seen across the site. No login in this demo.</p>
+      <p class="muted">Manage divisions, teams, schedule, results and data. These tools update the same data seen across the site.</p>
 
       <div class="grid grid-3" style="margin-top:12px;">
         <div class="card">
@@ -466,6 +451,29 @@
             <span class="help">Export a backup before resetting. Import replaces your current data.</span>
           </div>
         </div>
+
+        <div class="card">
+          <h3>Admin Settings</h3>
+          <div class="grid">
+            <form id="passForm" class="grid">
+              <div class="field">
+                <label for="newPass">New Admin Passcode</label>
+                <input id="newPass" class="input" type="password" minlength="4" placeholder="Enter new passcode" required />
+              </div>
+              <div class="field">
+                <label for="confirmPass">Confirm Passcode</label>
+                <input id="confirmPass" class="input" type="password" minlength="4" placeholder="Re-enter passcode" required />
+              </div>
+              <button class="btn" type="submit">Change Passcode</button>
+            </form>
+            <div class="flex">
+              <button class="btn secondary" id="requirePass">Require Passcode Again</button>
+              <button class="btn secondary" id="logoutAdmin">Log Out of Admin</button>
+            </div>
+            <span class="help">Passcode is stored locally in this browser. Use Export/Import JSON to move league data; passcode does not travel with data.</span>
+          </div>
+        </div>
+
       </div>
     </section>
   </main>
@@ -479,394 +487,121 @@
 
     /**
      * SUNCOAST SPORTS LEAGUE — single-file demo app (localStorage only).
-     * Replace any of this with your own backend integration.
      */
 
     const $ = (sel, el = document) => el.querySelector(sel);
     const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
 
+    // === Admin passcode storage ===
+    const ADMIN_PASSCODE_DEFAULT = "suncoast2025"; // change default here
+    const PASS_KEY = 'ssl_admin_pass';
+    function getAdminPasscode(){ return localStorage.getItem(PASS_KEY) || ADMIN_PASSCODE_DEFAULT; }
+    function setAdminPasscode(p){ localStorage.setItem(PASS_KEY, p); }
+
+    // === App data ===
     const storeKey = 'suncoast-sports-league-v1';
-    let db = {
-      divisions: ["9U", "10U", "11U", "12U"],
-      teams: [],      // {id, name, division, coach}
-      players: [],    // {id, name, dob, guardian, email, phone, division, teamId?, jersey, notes}
-      games: []       // {id, dateISO, field, division, round, homeId, awayId, status: 'scheduled'|'final', score?:{home,away}}
-    };
+    let db = { divisions: ["9U","10U","11U","12U"], teams: [], players: [], games: [] };
 
-    function uid(prefix = '') {
-      return prefix + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
-    }
-
-    function load() {
-      try {
-        const raw = localStorage.getItem(storeKey);
-        if (raw) db = JSON.parse(raw);
-      } catch(e) { console.warn('Failed to load store', e); }
-    }
-    function save() {
-      localStorage.setItem(storeKey, JSON.stringify(db));
-      renderAll();
-    }
-
-    function byId(list, id) { return list.find(x => x.id === id); }
+    function uid(prefix = '') { return prefix + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
+    function load(){ try{ const raw = localStorage.getItem(storeKey); if(raw) db = JSON.parse(raw); }catch(e){ console.warn('Failed to load store', e); } }
+    function save(){ localStorage.setItem(storeKey, JSON.stringify(db)); renderAll(); }
+    function byId(list, id){ return list.find(x=>x.id===id); }
 
     // NAV
-    function routeFromHash() { return location.hash.replace('#', '') || 'home'; }
-    function setActiveNav(hash) {
-      $$('nav a[data-link]').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + hash));
-    }
-    function showSection(hash) {
+    function routeFromHash(){ return location.hash.replace('#','') || 'home'; }
+    function setActiveNav(hash){ $$('nav a[data-link]').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + hash)); }
+    function showSection(hash){
       $$('main > section').forEach(s => s.classList.add('hidden'));
-      const el = $('#' + hash);
-      if (el) el.classList.remove('hidden');
-      setActiveNav(hash);
+      const el = $('#' + hash); if(!el) return;
+      if(hash==='admin'){
+        if(!sessionStorage.getItem('adminAuth')){
+          const code = prompt('Enter admin passcode:');
+          if(code !== getAdminPasscode()){
+            alert('Incorrect passcode.'); location.hash = '#home'; return;
+          }
+          sessionStorage.setItem('adminAuth','true');
+        }
+      }
+      el.classList.remove('hidden'); setActiveNav(hash);
     }
 
     // SEO META PER ROUTE
     function setMetaForRoute(hash){
       const map = {
-        home: {
-          title: 'Home | Suncoast Sports League',
-          desc: 'Welcome to the Suncoast Sports League — community baseball in Southwest Florida with schedules, standings, stats, and more.'
-        },
-        register: {
-          title: 'Register | Suncoast Sports League',
-          desc: 'Sign up players for the Suncoast Sports League. Youth baseball focused on development, fun, and fair play.'
-        },
-        schedule: {
-          title: 'Schedule | Suncoast Sports League',
-          desc: 'View the latest Suncoast Sports League game schedule with times, fields, and matchups.'
-        },
-        standings: {
-          title: 'Standings | Suncoast Sports League',
-          desc: 'Track division standings, wins, losses, ties, and points for Suncoast Sports League teams.'
-        },
-        stats: {
-          title: 'Stats | Suncoast Sports League',
-          desc: 'Explore team performance metrics and league stats for Suncoast Sports League baseball.'
-        },
-        teams: {
-          title: 'Teams | Suncoast Sports League',
-          desc: 'View rosters, coaches, and divisions for Suncoast Sports League baseball teams.'
-        },
-        admin: {
-          title: 'Admin | Suncoast Sports League',
-          desc: 'League management tools for divisions, teams, schedules, results, and data.'
-        }
+        home: { title: 'Home | Suncoast Sports League', desc: 'Welcome to the Suncoast Sports League — community baseball in Southwest Florida with schedules, standings, stats, and more.' },
+        register: { title: 'Register | Suncoast Sports League', desc: 'Sign up players for the Suncoast Sports League. Youth baseball focused on development, fun, and fair play.' },
+        schedule: { title: 'Schedule | Suncoast Sports League', desc: 'View the latest Suncoast Sports League game schedule with times, fields, and matchups.' },
+        standings: { title: 'Standings | Suncoast Sports League', desc: 'Track division standings, wins, losses, ties, and points for Suncoast Sports League teams.' },
+        stats: { title: 'Stats | Suncoast Sports League', desc: 'Explore team performance metrics and league stats for Suncoast Sports League baseball.' },
+        teams: { title: 'Teams | Suncoast Sports League', desc: 'View rosters, coaches, and divisions for Suncoast Sports League baseball teams.' },
+        admin: { title: 'Admin | Suncoast Sports League', desc: 'League management tools for divisions, teams, schedules, results, and data.' }
       };
-      const meta = map[hash] || map.home;
-      document.title = meta.title;
-      const d = document.querySelector('meta[name="description"]');
-      if (d) d.setAttribute('content', meta.desc);
+      const meta = map[hash] || map.home; document.title = meta.title; const d = document.querySelector('meta[name="description"]'); if(d) d.setAttribute('content', meta.desc);
     }
 
-    // RENDER HELPERS
-    function fillSelect(selectEl, values, { includeAll=false, allLabel='All', valueKey, labelKey }={}) {
-      const opts = [];
-      if (includeAll) opts.push(`<option value="">${allLabel}</option>`);
-      for (const v of values) {
-        if (typeof v === 'string') opts.push(`<option>${v}</option>`);
-        else opts.push(`<option value="${v[valueKey]}">${v[labelKey]}</option>`);
-      }
+    // Helpers
+    function fillSelect(selectEl, values, { includeAll=false, allLabel='All', valueKey, labelKey }={}){
+      const opts=[]; if(includeAll) opts.push(`<option value="">${allLabel}</option>`);
+      for(const v of values){ if(typeof v==='string') opts.push(`<option>${v}</option>`); else opts.push(`<option value="${v[valueKey]}">${v[labelKey]}</option>`); }
       selectEl.innerHTML = opts.join('');
     }
-
-    function dateFmt(iso) {
-      const d = new Date(iso);
-      return d.toLocaleString([], { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
-    }
-
-    function download(filename, content, type='text/plain') {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([content], {type}));
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
+    function dateFmt(iso){ const d=new Date(iso); return d.toLocaleString([], {year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+    function download(filename, content, type='text/plain'){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=filename; a.click(); URL.revokeObjectURL(a.href); }
 
     // HOME
-    function renderHomeNextGames() {
-      const upcoming = db.games.filter(g => g.status !== 'final').sort((a,b)=> new Date(a.dateISO)-new Date(b.dateISO)).slice(0,4);
-      const box = $('#homeNextGames');
-      box.innerHTML = upcoming.map(g => {
-        const home = byId(db.teams, g.homeId)?.name || 'TBD';
-        const away = byId(db.teams, g.awayId)?.name || 'TBD';
-        return `<div class="card">
-          <div class="flex"><strong>${home}</strong><span class="muted">vs</span><strong>${away}</strong><span class="right chip">${g.division}</span></div>
-          <div class="flex"><span>${dateFmt(g.dateISO)}</span><span class="right">${g.field}</span></div>
-        </div>`;
-      }).join('') || '<div class="help">No upcoming games.</div>';
-    }
-
-    function computeStandings(division) {
-      const teams = db.teams.filter(t => !division || t.division === division);
-      const stats = teams.map(t => ({ id: t.id, name: t.name, division: t.division, gp:0,w:0,l:0,t:0,rf:0,ra:0 }));
-      const map = Object.fromEntries(stats.map(s => [s.id, s]));
-      for (const g of db.games) {
-        if (g.status !== 'final') continue;
-        if (division && g.division !== division) continue;
-        const hs = g.score?.home ?? 0;
-        const as = g.score?.away ?? 0;
-        const h = map[g.homeId];
-        const a = map[g.awayId];
-        if (!h || !a) continue;
-        h.gp++; a.gp++;
-        h.rf += hs; h.ra += as;
-        a.rf += as; a.ra += hs;
-        if (hs > as) { h.w++; a.l++; }
-        else if (hs < as) { a.w++; h.l++; }
-        else { h.t++; a.t++; }
-      }
-      for (const s of stats) s.pts = s.w*2 + s.t*1, s.rd = s.rf - s.ra;
-      stats.sort((x,y)=> y.pts - x.pts || y.rd - x.rd || y.rf - x.rf || x.name.localeCompare(y.name));
-      return stats;
-    }
-
-    function renderLeaders() {
-      const all = computeStandings();
-      const topPts = all.slice(0,3).map(s=>`<div class="flex"><span>${s.name}</span><span class="right">${s.w}-${s.l}-${s.t} • ${s.pts} pts</span></div>`).join('') || '<div class="help">No data yet.</div>';
-      $('#leaderRecords').innerHTML = topPts;
-      const topRD = [...all].sort((a,b)=> b.rd-a.rd).slice(0,3).map(s=>`<div class="flex"><span>${s.name}</span><span class="right">RD ${s.rd}</span></div>`).join('') || '<div class="help">No data yet.</div>';
-      $('#leaderRD').innerHTML = topRD;
-    }
+    function renderHomeNextGames(){ const upcoming=db.games.filter(g=>g.status!=='final').sort((a,b)=>new Date(a.dateISO)-new Date(b.dateISO)).slice(0,4); const box=$('#homeNextGames'); box.innerHTML = upcoming.map(g=>{ const home=byId(db.teams,g.homeId)?.name||'TBD'; const away=byId(db.teams,g.awayId)?.name||'TBD'; return `<div class="card"><div class="flex"><strong>${home}</strong><span class="muted">vs</span><strong>${away}</strong><span class="right chip">${g.division}</span></div><div class="flex"><span>${dateFmt(g.dateISO)}</span><span class="right">${g.field}</span></div></div>`; }).join('') || '<div class="help">No upcoming games.</div>'; }
+    function computeStandings(division){ const teams=db.teams.filter(t=>!division||t.division===division); const stats=teams.map(t=>({id:t.id,name:t.name,division:t.division,gp:0,w:0,l:0,t:0,rf:0,ra:0})); const map=Object.fromEntries(stats.map(s=>[s.id,s])); for(const g of db.games){ if(g.status!=='final') continue; if(division&&g.division!==division) continue; const hs=g.score?.home??0; const as=g.score?.away??0; const h=map[g.homeId]; const a=map[g.awayId]; if(!h||!a) continue; h.gp++; a.gp++; h.rf+=hs; h.ra+=as; a.rf+=as; a.ra+=hs; if(hs>as){h.w++; a.l++;} else if(hs<as){a.w++; h.l++;} else {h.t++; a.t++;} } for(const s of stats){ s.pts=s.w*2+s.t*1; s.rd=s.rf-s.ra; } stats.sort((x,y)=> y.pts-x.pts || y.rd-x.rd || y.rf-x.rf || x.name.localeCompare(y.name)); return stats; }
+    function renderLeaders(){ const all=computeStandings(); const topPts=all.slice(0,3).map(s=>`<div class="flex"><span>${s.name}</span><span class="right">${s.w}-${s.l}-${s.t} • ${s.pts} pts</span></div>`).join('')||'<div class="help">No data yet.</div>'; $('#leaderRecords').innerHTML=topPts; const topRD=[...all].sort((a,b)=>b.rd-a.rd).slice(0,3).map(s=>`<div class="flex"><span>${s.name}</span><span class="right">RD ${s.rd}</span></div>`).join('')||'<div class="help">No data yet.</div>'; $('#leaderRD').innerHTML=topRD; }
 
     // REGISTER
-    function renderRegistrationForm() {
-      fillSelect($('#division'), db.divisions);
-      fillSelect($('#preferredTeam'), [{id:'',name:'No Preference'}, ...db.teams], { valueKey:'id', labelKey:'name' });
-    }
+    function renderRegistrationForm(){ fillSelect($('#division'), db.divisions); fillSelect($('#preferredTeam'), [{id:'',name:'No Preference'}, ...db.teams], { valueKey:'id', labelKey:'name' }); }
 
     // SCHEDULE
-    let scheduleSortKey = 'date';
-    function renderSchedule() {
-      fillSelect($('#filterDivision'), ['All Divisions', ...db.divisions], { includeAll:false });
-      fillSelect($('#filterTeam'), [{id:'',name:'All Teams'}, ...db.teams], { valueKey:'id', labelKey:'name' });
-
-      const divSel = $('#filterDivision').value;
-      const teamSel = $('#filterTeam').value;
-      const from = $('#filterFrom').value ? new Date($('#filterFrom').value) : null;
-      const to = $('#filterTo').value ? new Date($('#filterTo').value) : null;
-
-      let rows = db.games.slice();
-      if (divSel && divSel !== 'All Divisions') rows = rows.filter(g => g.division === divSel);
-      if (teamSel) rows = rows.filter(g => g.homeId === teamSel || g.awayId === teamSel);
-      if (from) rows = rows.filter(g => new Date(g.dateISO) >= from);
-      if (to) rows = rows.filter(g => new Date(g.dateISO) <= to);
-
-      rows.sort((a,b)=> {
-        switch(scheduleSortKey){
-          case 'division': return a.division.localeCompare(b.division);
-          case 'home': return (byId(db.teams, a.homeId)?.name||'').localeCompare(byId(db.teams, b.homeId)?.name||'');
-          case 'away': return (byId(db.teams, a.awayId)?.name||'').localeCompare(byId(db.teams, b.awayId)?.name||'');
-          case 'field': return a.field.localeCompare(b.field);
-          case 'status': return (a.status||'').localeCompare(b.status||'');
-          default: return new Date(a.dateISO) - new Date(b.dateISO);
-        }
-      });
-
-      $('#scheduleBody').innerHTML = rows.map(g => {
-        const home = byId(db.teams, g.homeId)?.name || 'TBD';
-        const away = byId(db.teams, g.awayId)?.name || 'TBD';
-        const status = g.status === 'final' ? `${g.score.home}-${g.score.away} Final` : 'Scheduled';
-        return `<tr>
-          <td>${dateFmt(g.dateISO)}</td>
-          <td>${g.division}</td>
-          <td>${home}</td>
-          <td>${away}</td>
-          <td>${g.field}</td>
-          <td class="align-r">${status}</td>
-        </tr>`;
-      }).join('') || `<tr><td colspan="6" class="muted">No games found.</td></tr>`;
-    }
+    let scheduleSortKey='date';
+    function renderSchedule(){ fillSelect($('#filterDivision'), ['All Divisions', ...db.divisions], { includeAll:false }); fillSelect($('#filterTeam'), [{id:'',name:'All Teams'}, ...db.teams], { valueKey:'id', labelKey:'name' }); const divSel=$('#filterDivision').value; const teamSel=$('#filterTeam').value; const from=$('#filterFrom').value?new Date($('#filterFrom').value):null; const to=$('#filterTo').value?new Date($('#filterTo').value):null; let rows=db.games.slice(); if(divSel&&divSel!=='All Divisions') rows=rows.filter(g=>g.division===divSel); if(teamSel) rows=rows.filter(g=>g.homeId===teamSel||g.awayId===teamSel); if(from) rows=rows.filter(g=>new Date(g.dateISO)>=from); if(to) rows=rows.filter(g=>new Date(g.dateISO)<=to); rows.sort((a,b)=>{ switch(scheduleSortKey){ case 'division': return a.division.localeCompare(b.division); case 'home': return (byId(db.teams,a.homeId)?.name||'').localeCompare(byId(db.teams,b.homeId)?.name||''); case 'away': return (byId(db.teams,a.awayId)?.name||'').localeCompare(byId(db.teams,b.awayId)?.name||''); case 'field': return a.field.localeCompare(b.field); case 'status': return (a.status||'').localeCompare(b.status||''); default: return new Date(a.dateISO)-new Date(b.dateISO); } }); $('#scheduleBody').innerHTML = rows.map(g=>{ const home=byId(db.teams,g.homeId)?.name||'TBD'; const away=byId(db.teams,g.awayId)?.name||'TBD'; const status=g.status==='final'?`${g.score.home}-${g.score.away} Final`:'Scheduled'; return `<tr><td>${dateFmt(g.dateISO)}</td><td>${g.division}</td><td>${home}</td><td>${away}</td><td>${g.field}</td><td class="align-r">${status}</td></tr>`; }).join('') || `<tr><td colspan="6" class="muted">No games found.</td></tr>`; }
 
     // STANDINGS
-    let standingsSortKey = 'pts';
-    function renderStandings() {
-      fillSelect($('#standingsDivision'), db.divisions);
-      const div = $('#standingsDivision').value || db.divisions[0];
-      const stats = computeStandings(div);
-      const sorted = stats.sort((a,b)=> {
-        switch(standingsSortKey){
-          case 'team': return a.name.localeCompare(b.name);
-          case 'gp': return b.gp - a.gp;
-          case 'w': return b.w - a.w;
-          case 'l': return a.l - b.l;
-          case 't': return b.t - a.t;
-          case 'pts': return b.pts - a.pts;
-          case 'rf': return b.rf - a.rf;
-          case 'ra': return a.ra - b.ra;
-          case 'rd': return b.rd - a.rd;
-          default: return b.pts - a.pts;
-        }
-      });
-      $('#standingsBody').innerHTML = sorted.map((s,i)=> `<tr>
-        <td>${i+1}</td>
-        <td>${s.name}</td>
-        <td class="align-r">${s.gp}</td>
-        <td class="align-r">${s.w}</td>
-        <td class="align-r">${s.l}</td>
-        <td class="align-r">${s.t}</td>
-        <td class="align-r">${s.pts}</td>
-        <td class="align-r">${s.rf}</td>
-        <td class="align-r">${s.ra}</td>
-        <td class="align-r">${s.rd}</td>
-      </tr>`).join('') || `<tr><td colspan="10" class="muted">No results in this division yet.</td></tr>`;
-    }
+    let standingsSortKey='pts';
+    function renderStandings(){ fillSelect($('#standingsDivision'), db.divisions); const div=$('#standingsDivision').value||db.divisions[0]; const stats=computeStandings(div); const sorted=stats.sort((a,b)=>{ switch(standingsSortKey){ case 'team': return a.name.localeCompare(b.name); case 'gp': return b.gp-a.gp; case 'w': return b.w-a.w; case 'l': return a.l-b.l; case 't': return b.t-a.t; case 'pts': return b.pts-a.pts; case 'rf': return b.rf-a.rf; case 'ra': return a.ra-b.ra; case 'rd': return b.rd-a.rd; default: return b.pts-a.pts; } }); $('#standingsBody').innerHTML = sorted.map((s,i)=>`<tr><td>${i+1}</td><td>${s.name}</td><td class="align-r">${s.gp}</td><td class="align-r">${s.w}</td><td class="align-r">${s.l}</td><td class="align-r">${s.t}</td><td class="align-r">${s.pts}</td><td class="align-r">${s.rf}</td><td class="align-r">${s.ra}</td><td class="align-r">${s.rd}</td></tr>`).join('') || `<tr><td colspan="10" class="muted">No results in this division yet.</td></tr>`; }
 
     // STATS
-    function renderStats() {
-      fillSelect($('#statsDivision'), db.divisions);
-      const div = $('#statsDivision').value || db.divisions[0];
-      const stats = computeStandings(div);
-      const leaders = {
-        bestRecord: stats[0],
-        mostRuns: [...stats].sort((a,b)=> b.rf - a.rf)[0],
-        stingiest: [...stats].sort((a,b)=> a.ra - b.ra)[0],
-        bestRD: [...stats].sort((a,b)=> b.rd - a.rd)[0],
-      };
-      const cards = [
-        { title: 'Best Record', v: leaders.bestRecord },
-        { title: 'Most Runs For', v: leaders.mostRuns },
-        { title: 'Fewest Runs Against', v: leaders.stingiest },
-        { title: 'Best Run Differential', v: leaders.bestRD },
-      ].filter(x=>x.v);
-
-      $('#statsCards').innerHTML = cards.map(c => `<div class="card">
-        <div class="flex"><strong>${c.title}</strong><span class="right tag">${div}</span></div>
-        <div style="font-size:20px; font-weight:800;">${c.v.name}</div>
-        <div class="muted">W-L-T: ${c.v.w}-${c.v.l}-${c.v.t} &nbsp; • &nbsp; RF: ${c.v.rf} &nbsp; • &nbsp; RA: ${c.v.ra} &nbsp; • &nbsp; RD: ${c.v.rd}</div>
-      </div>`).join('') || '<div class="help">No stats yet. Record some results in Admin → Record Result.</div>';
-    }
+    function renderStats(){ fillSelect($('#statsDivision'), db.divisions); const div=$('#statsDivision').value||db.divisions[0]; const stats=computeStandings(div); const leaders={ bestRecord:stats[0], mostRuns:[...stats].sort((a,b)=>b.rf-a.rf)[0], stingiest:[...stats].sort((a,b)=>a.ra-b.ra)[0], bestRD:[...stats].sort((a,b)=>b.rd-a.rd)[0] }; const cards=[ {title:'Best Record',v:leaders.bestRecord}, {title:'Most Runs For',v:leaders.mostRuns}, {title:'Fewest Runs Against',v:leaders.stingiest}, {title:'Best Run Differential',v:leaders.bestRD} ].filter(x=>x.v); $('#statsCards').innerHTML = cards.map(c=>`<div class="card"><div class="flex"><strong>${c.title}</strong><span class="right tag">${div}</span></div><div style="font-size:20px;font-weight:800;">${c.v.name}</div><div class="muted">W-L-T: ${c.v.w}-${c.v.l}-${c.v.t} &nbsp; • &nbsp; RF: ${c.v.rf} &nbsp; • &nbsp; RA: ${c.v.ra} &nbsp; • &nbsp; RD: ${c.v.rd}</div></div>`).join('') || '<div class="help">No stats yet. Record some results in Admin → Record Result.</div>'; }
 
     // TEAMS
-    function renderTeams() {
-      fillSelect($('#teamsDivision'), ['All Divisions', ...db.divisions]);
-      const div = $('#teamsDivision').value;
-      const q = ($('#teamSearch').value||'').toLowerCase();
-      const teams = db.teams.filter(t => (!div || div==='All Divisions' || t.division===div) && (!q || t.name.toLowerCase().includes(q)));
-      const cards = teams.map(t => {
-        const roster = db.players.filter(p => p.teamId === t.id);
-        return `<div class="card">
-          <div class="flex"><strong>${t.name}</strong><span class="tag">${t.division}</span><span class="right muted">Coach: ${t.coach||'—'}</span></div>
-          <div class="sep"></div>
-          <div class="help">Roster (${roster.length})</div>
-          <ol style="margin:0; padding-left:18px;">${roster.map(p=>`<li>${p.name} <span class=\"muted\">(${p.jersey||'N/A'})</span></li>`).join('') || '<div class="muted">No players yet.</div>'}</ol>
-        </div>`;
-      }).join('') || '<div class="help">No teams yet. Add some under Admin → Teams.</div>';
-      $('#teamCards').innerHTML = cards;
-    }
+    function renderTeams(){ fillSelect($('#teamsDivision'), ['All Divisions', ...db.divisions]); const div=$('#teamsDivision').value; const q=($('#teamSearch').value||'').toLowerCase(); const teams=db.teams.filter(t=>(!div||div==='All Divisions'||t.division===div)&&(!q||t.name.toLowerCase().includes(q))); const cards=teams.map(t=>{ const roster=db.players.filter(p=>p.teamId===t.id); return `<div class="card"><div class="flex"><strong>${t.name}</strong><span class="tag">${t.division}</span><span class="right muted">Coach: ${t.coach||'—'}</span></div><div class="sep"></div><div class="help">Roster (${roster.length})</div><ol style="margin:0; padding-left:18px;">${roster.map(p=>`<li>${p.name} <span class=\"muted\">(${p.jersey||'N/A'})</span></li>`).join('')||'<div class="muted">No players yet.</div>'}</ol></div>`; }).join('') || '<div class="help">No teams yet. Add some under Admin → Teams.</div>'; $('#teamCards').innerHTML=cards; }
 
     // ADMIN — DIVISIONS
-    function renderDivisionsAdmin() {
-      const list = db.divisions.map(d => `<div class="flex"><span>${d}</span><button class="btn secondary right" data-del-division="${d}">Remove</button></div>`).join('');
-      $('#divisionsList').innerHTML = list || '<div class="help">No divisions yet.</div>';
-      fillSelect($('#teamDivision'), db.divisions);
-      fillSelect($('#gameDivision'), db.divisions);
-    }
+    function renderDivisionsAdmin(){ const list=db.divisions.map(d=>`<div class="flex"><span>${d}</span><button class="btn secondary right" data-del-division="${d}">Remove</button></div>`).join(''); $('#divisionsList').innerHTML=list||'<div class="help">No divisions yet.</div>'; fillSelect($('#teamDivision'), db.divisions); fillSelect($('#gameDivision'), db.divisions); }
 
     // ADMIN — TEAMS
-    function renderTeamsAdmin() {
-      const list = db.teams.map(t => `<div class="flex"><span>${t.name} <span class="tag">${t.division}</span></span><button class="btn secondary right" data-del-team="${t.id}">Remove</button></div>`).join('');
-      $('#teamsList').innerHTML = list || '<div class="help">No teams yet.</div>';
-      // dependent selects
-      const div = $('#gameDivision').value || db.divisions[0];
-      const filtered = db.teams.filter(x => x.division === div);
-      fillSelect($('#homeTeam'), filtered, { valueKey:'id', labelKey:'name'});
-      fillSelect($('#awayTeam'), filtered, { valueKey:'id', labelKey:'name'});
-      // Register form team list
-      fillSelect($('#preferredTeam'), [{id:'',name:'No Preference'}, ...db.teams], { valueKey:'id', labelKey:'name' });
-    }
+    function renderTeamsAdmin(){ const list=db.teams.map(t=>`<div class="flex"><span>${t.name} <span class="tag">${t.division}</span></span><button class="btn secondary right" data-del-team="${t.id}">Remove</button></div>`).join(''); $('#teamsList').innerHTML=list||'<div class="help">No teams yet.</div>'; const div=$('#gameDivision').value||db.divisions[0]; const filtered=db.teams.filter(x=>x.division===div); fillSelect($('#homeTeam'), filtered, { valueKey:'id', labelKey:'name' }); fillSelect($('#awayTeam'), filtered, { valueKey:'id', labelKey:'name' }); fillSelect($('#preferredTeam'), [{id:'',name:'No Preference'}, ...db.teams], { valueKey:'id', labelKey:'name' }); }
 
     // ADMIN — SCHEDULE
-    function renderRecordSelect() {
-      const options = db.games.map(g => {
-        const home = byId(db.teams, g.homeId)?.name || 'TBD';
-        const away = byId(db.teams, g.awayId)?.name || 'TBD';
-        const label = `${dateFmt(g.dateISO)} — ${g.division} — ${home} vs ${away}`;
-        return `<option value="${g.id}">${label}</option>`;
-      }).join('');
-      $('#recordGame').innerHTML = options || '<option value="">No games scheduled</option>';
-    }
+    function renderRecordSelect(){ const options=db.games.map(g=>{ const home=byId(db.teams,g.homeId)?.name||'TBD'; const away=byId(db.teams,g.awayId)?.name||'TBD'; const label=`${dateFmt(g.dateISO)} — ${g.division} — ${home} vs ${away}`; return `<option value="${g.id}">${label}</option>`; }).join(''); $('#recordGame').innerHTML = options || '<option value="">No games scheduled</option>'; }
 
     // EXPORTS
-    function exportStandingsCsv() {
-      const div = $('#standingsDivision').value || db.divisions[0];
-      const stats = computeStandings(div);
-      const header = ['Rank','Team','GP','W','L','T','Pts','RF','RA','RD'];
-      const rows = stats.map((s,i)=>[i+1,s.name,s.gp,s.w,s.l,s.t,s.pts,s.rf,s.ra,s.rd]);
-      const csv = [header, ...rows].map(r=>r.join(',')).join('\n');
-      download(`standings_${div}.csv`, csv, 'text/csv');
-    }
+    function exportStandingsCsv(){ const div=$('#standingsDivision').value||db.divisions[0]; const stats=computeStandings(div); const header=['Rank','Team','GP','W','L','T','Pts','RF','RA','RD']; const rows=stats.map((s,i)=>[i+1,s.name,s.gp,s.w,s.l,s.t,s.pts,s.rf,s.ra,s.rd]); const csv=[header,...rows].map(r=>r.join(',')).join('\n'); download(`standings_${div}.csv`, csv, 'text/csv'); }
+    function exportJson(){ download('suncoast_sports_league_backup.json', JSON.stringify(db,null,2), 'application/json'); }
+    function importJson(file){ const reader=new FileReader(); reader.onload=e=>{ try{ db=JSON.parse(e.target.result); save(); alert('Import complete.'); }catch(err){ alert('Invalid JSON.'); } }; reader.readAsText(file); }
+    function seedDemo(){ db.divisions=["9U","10U"]; db.teams=[]; db.players=[]; db.games=[]; const tigers={id:uid('t_'),name:'Tigers',division:'10U',coach:'B. Collins'}; const sharks={id:uid('t_'),name:'Sharks',division:'10U',coach:'L. Lee'}; const eagles={id:uid('t_'),name:'Eagles',division:'9U',coach:'D. Cruz'}; const bears={id:uid('t_'),name:'Bears',division:'9U',coach:'K. Patel'}; db.teams.push(tigers,sharks,eagles,bears); db.players.push({id:uid('p_'),name:'Alex Johnson',dob:'2015-04-21',guardian:'M. Johnson',email:'mj@example.com',phone:'555-1111',division:'10U',teamId:tigers.id,jersey:'AM'},{id:uid('p_'),name:'Sam Green',dob:'2015-10-05',guardian:'R. Green',email:'rg@example.com',phone:'555-2222',division:'10U',teamId:tigers.id,jersey:'YM'},{id:uid('p_'),name:'Leo Park',dob:'2016-02-12',guardian:'H. Park',email:'hp@example.com',phone:'555-3333',division:'10U',teamId:sharks.id,jersey:'YL'},{id:uid('p_'),name:'Nina Diaz',dob:'2016-07-30',guardian:'C. Diaz',email:'cd@example.com',phone:'555-4444',division:'9U',teamId:eagles.id,jersey:'YS'}); const now=new Date(); function addDays(d){ const x=new Date(now); x.setDate(x.getDate()+d); return x; } db.games.push({id:uid('g_'),dateISO:addDays(1).toISOString(),field:'Field A',division:'10U',round:'Regular',homeId:tigers.id,awayId:sharks.id,status:'scheduled'},{id:uid('g_'),dateISO:addDays(2).toISOString(),field:'Field B',division:'9U',round:'Regular',homeId:eagles.id,awayId:bears.id,status:'scheduled'},{id:uid('g_'),dateISO:addDays(-2).toISOString(),field:'Field A',division:'10U',round:'Regular',homeId:tigers.id,awayId:sharks.id,status:'final',score:{home:7,away:5}},{id:uid('g_'),dateISO:addDays(-1).toISOString(),field:'Field B',division:'9U',round:'Regular',homeId:eagles.id,awayId:bears.id,status:'final',score:{home:3,away:3}}); save(); alert('Seeded demo data!'); }
 
-    function exportJson() { download('suncoast_sports_league_backup.json', JSON.stringify(db, null, 2), 'application/json'); }
-
-    function importJson(file) {
-      const reader = new FileReader();
-      reader.onload = e => { try { db = JSON.parse(e.target.result); save(); alert('Import complete.'); } catch(err) { alert('Invalid JSON.'); } };
-      reader.readAsText(file);
-    }
-
-    function seedDemo() {
-      db.divisions = ["9U", "10U"]; db.teams = []; db.players = []; db.games = [];
-      const tigers = { id: uid('t_'), name: 'Tigers', division: '10U', coach: 'B. Collins' };
-      const sharks = { id: uid('t_'), name: 'Sharks', division: '10U', coach: 'L. Lee' };
-      const eagles = { id: uid('t_'), name: 'Eagles', division: '9U', coach: 'D. Cruz' };
-      const bears  = { id: uid('t_'), name: 'Bears',  division: '9U', coach: 'K. Patel' };
-      db.teams.push(tigers, sharks, eagles, bears);
-      // Players (short list)
-      db.players.push(
-        { id: uid('p_'), name:'Alex Johnson', dob:'2015-04-21', guardian:'M. Johnson', email:'mj@example.com', phone:'555-1111', division:'10U', teamId: tigers.id, jersey:'AM' },
-        { id: uid('p_'), name:'Sam Green',    dob:'2015-10-05', guardian:'R. Green', email:'rg@example.com', phone:'555-2222', division:'10U', teamId: tigers.id, jersey:'YM' },
-        { id: uid('p_'), name:'Leo Park',     dob:'2016-02-12', guardian:'H. Park',  email:'hp@example.com', phone:'555-3333', division:'10U', teamId: sharks.id, jersey:'YL' },
-        { id: uid('p_'), name:'Nina Diaz',    dob:'2016-07-30', guardian:'C. Diaz',  email:'cd@example.com', phone:'555-4444', division:'9U', teamId: eagles.id, jersey:'YS' }
-      );
-      // Schedule (today + offsets)
-      const now = new Date();
-      function addDays(d){ const x=new Date(now); x.setDate(x.getDate()+d); return x; }
-      db.games.push(
-        { id: uid('g_'), dateISO: addDays(1).toISOString(), field:'Field A', division:'10U', round:'Regular', homeId:tigers.id, awayId:sharks.id, status:'scheduled' },
-        { id: uid('g_'), dateISO: addDays(2).toISOString(), field:'Field B', division:'9U',  round:'Regular', homeId:eagles.id, awayId:bears.id,  status:'scheduled' },
-        { id: uid('g_'), dateISO: addDays(-2).toISOString(), field:'Field A', division:'10U', round:'Regular', homeId:tigers.id, awayId:sharks.id, status:'final', score:{home:7, away:5} },
-        { id: uid('g_'), dateISO: addDays(-1).toISOString(), field:'Field B', division:'9U',  round:'Regular', homeId:eagles.id, awayId:bears.id,  status:'final', score:{home:3, away:3} }
-      );
-      save();
-      alert('Seeded demo data!');
-    }
-
-    // EVENT BINDINGS
-    function bindEvents() {
-      // Nav links keep SPA feel
-      $$('a[data-link]').forEach(a => a.addEventListener('click', e => {
-        const href = a.getAttribute('href');
-        if (href?.startsWith('#')) { e.preventDefault(); history.pushState({}, '', href); onRouteChange(); }
-      }));
-
+    // EVENTS
+    function bindEvents(){
+      // SPA nav
+      $$('a[data-link]').forEach(a=>a.addEventListener('click', e=>{ const href=a.getAttribute('href'); if(href?.startsWith('#')){ e.preventDefault(); history.pushState({},'',href); onRouteChange(); } }));
       window.addEventListener('popstate', onRouteChange);
 
-      // Registration submit
-      $('#registrationForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const name = $('#playerName').value.trim();
-        const dob = $('#dob').value; const guardian = $('#guardian').value.trim();
-        const email = $('#email').value.trim(); const phone = $('#phone').value.trim();
-        const division = $('#division').value; const teamId = $('#preferredTeam').value || null;
-        const jersey = $('#jerseySize').value; const notes = $('#notes').value.trim();
-        if (!$('#waiver').checked) return alert('Please agree to the waiver.');
-        const p = { id: uid('p_'), name, dob, guardian, email, phone, division, teamId, jersey, notes };
-        db.players.push(p);
-        $('#regMsg').textContent = 'Registration received! You will receive a confirmation email.';
-        (e.target).reset();
-        save();
-      });
+      // Registration
+      $('#registrationForm').addEventListener('submit', e=>{ e.preventDefault(); const name=$('#playerName').value.trim(); const dob=$('#dob').value; const guardian=$('#guardian').value.trim(); const email=$('#email').value.trim(); const phone=$('#phone').value.trim(); const division=$('#division').value; const teamId=$('#preferredTeam').value||null; const jersey=$('#jerseySize').value; const notes=$('#notes').value.trim(); if(!$('#waiver').checked) return alert('Please agree to the waiver.'); const p={id:uid('p_'),name,dob,guardian,email,phone,division,teamId,jersey,notes}; db.players.push(p); $('#regMsg').textContent='Registration received! You will receive a confirmation email.'; (e.target).reset(); save(); });
 
-      // Schedule filters and sorting
+      // Schedule
       $('#clearFilters').addEventListener('click', ()=>{ $('#filterDivision').value=''; $('#filterTeam').value=''; $('#filterFrom').value=''; $('#filterTo').value=''; renderSchedule(); });
-      $$('#schedule thead th').forEach(th => th.addEventListener('click', ()=>{ scheduleSortKey = th.dataset.sort || 'date'; renderSchedule(); }));
+      $$('#schedule thead th').forEach(th=>th.addEventListener('click', ()=>{ scheduleSortKey=th.dataset.sort||'date'; renderSchedule(); }));
 
       // Standings
       $('#standingsDivision').addEventListener('change', renderStandings);
       $('#exportStandingsCsv').addEventListener('click', exportStandingsCsv);
-      $$('#standings thead th[data-sort]').forEach(th => th.addEventListener('click', ()=>{ standingsSortKey = th.dataset.sort; renderStandings(); }));
+      $$('#standings thead th[data-sort]').forEach(th=>th.addEventListener('click', ()=>{ standingsSortKey=th.dataset.sort; renderStandings(); }));
 
       // Stats
       $('#statsDivision').addEventListener('change', renderStats);
@@ -878,96 +613,47 @@
       $('#printRosters').addEventListener('click', ()=> window.print());
 
       // Admin — Divisions
-      $('#addDivisionForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const name = $('#newDivision').value.trim();
-        if (!name) return;
-        if (db.divisions.includes(name)) return alert('Division already exists.');
-        db.divisions.push(name); $('#newDivision').value=''; save();
-      });
-      $('#divisionsList').addEventListener('click', e => {
-        const btn = e.target.closest('[data-del-division]'); if (!btn) return;
-        const d = btn.dataset.delDivision;
-        if (db.teams.some(t => t.division===d)) return alert('Remove teams in this division first.');
-        db.divisions = db.divisions.filter(x=>x!==d); save();
-      });
+      $('#addDivisionForm').addEventListener('submit', e=>{ e.preventDefault(); const name=$('#newDivision').value.trim(); if(!name) return; if(db.divisions.includes(name)) return alert('Division already exists.'); db.divisions.push(name); $('#newDivision').value=''; save(); });
+      $('#divisionsList').addEventListener('click', e=>{ const btn=e.target.closest('[data-del-division]'); if(!btn) return; const d=btn.dataset.delDivision; if(db.teams.some(t=>t.division===d)) return alert('Remove teams in this division first.'); db.divisions=db.divisions.filter(x=>x!==d); save(); });
 
       // Admin — Teams
-      $('#addTeamForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const name = $('#teamName').value.trim(); const division = $('#teamDivision').value; const coach = $('#coach').value.trim();
-        if (!name || !division) return;
-        db.teams.push({ id: uid('t_'), name, division, coach });
-        $('#teamName').value=''; $('#coach').value=''; save();
-      });
-      $('#teamsList').addEventListener('click', e => {
-        const btn = e.target.closest('[data-del-team]'); if (!btn) return;
-        const id = btn.dataset.delTeam;
-        if (db.players.some(p => p.teamId===id)) return alert('Remove or reassign players first.');
-        db.teams = db.teams.filter(t=>t.id!==id);
-        db.games = db.games.filter(g=> g.homeId!==id && g.awayId!==id);
-        save();
-      });
+      $('#addTeamForm').addEventListener('submit', e=>{ e.preventDefault(); const name=$('#teamName').value.trim(); const division=$('#teamDivision').value; const coach=$('#coach').value.trim(); if(!name||!division) return; db.teams.push({ id:uid('t_'), name, division, coach }); $('#teamName').value=''; $('#coach').value=''; save(); });
+      $('#teamsList').addEventListener('click', e=>{ const btn=e.target.closest('[data-del-team]'); if(!btn) return; const id=btn.dataset.delTeam; if(db.players.some(p=>p.teamId===id)) return alert('Remove or reassign players first.'); db.teams=db.teams.filter(t=>t.id!==id); db.games=db.games.filter(g=>g.homeId!==id && g.awayId!==id); save(); });
 
       // Admin — Schedule
       $('#gameDivision').addEventListener('change', renderTeamsAdmin);
-      $('#addGameForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const dateISO = new Date($('#gameDate').value).toISOString();
-        const field = $('#gameField').value.trim();
-        const division = $('#gameDivision').value; const round = $('#gameRound').value.trim();
-        const homeId = $('#homeTeam').value; const awayId = $('#awayTeam').value;
-        if (homeId === awayId) return alert('Home and Away cannot be the same team.');
-        db.games.push({ id: uid('g_'), dateISO, field, division, round, homeId, awayId, status:'scheduled' });
-        e.target.reset(); save();
-      });
+      $('#addGameForm').addEventListener('submit', e=>{ e.preventDefault(); const dateISO=new Date($('#gameDate').value).toISOString(); const field=$('#gameField').value.trim(); const division=$('#gameDivision').value; const round=$('#gameRound').value.trim(); const homeId=$('#homeTeam').value; const awayId=$('#awayTeam').value; if(homeId===awayId) return alert('Home and Away cannot be the same team.'); db.games.push({ id:uid('g_'), dateISO, field, division, round, homeId, awayId, status:'scheduled' }); e.target.reset(); save(); });
 
       // Admin — Record
-      $('#recordForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const id = $('#recordGame').value; const g = byId(db.games, id); if (!g) return;
-        const home = parseInt($('#homeScore').value, 10); const away = parseInt($('#awayScore').value, 10);
-        g.status = 'final'; g.score = { home, away }; save();
-      });
+      $('#recordForm').addEventListener('submit', e=>{ e.preventDefault(); const id=$('#recordGame').value; const g=byId(db.games,id); if(!g) return; const home=parseInt($('#homeScore').value,10); const away=parseInt($('#awayScore').value,10); g.status='final'; g.score={home,away}; save(); });
 
       // Data
       $('#exportJson').addEventListener('click', exportJson);
-      $('#importJson').addEventListener('change', e => { const file = e.target.files?.[0]; if (file) importJson(file); e.target.value = ''; });
+      $('#importJson').addEventListener('change', e=>{ const file=e.target.files?.[0]; if(file) importJson(file); e.target.value=''; });
       $('#seedDemo').addEventListener('click', seedDemo);
-      $('#resetAll').addEventListener('click', ()=>{ if (confirm('Erase all data?')) { localStorage.removeItem(storeKey); db = { divisions:[], teams:[], players:[], games:[] }; save(); }});
+      $('#resetAll').addEventListener('click', ()=>{ if(confirm('Erase all data?')){ localStorage.removeItem(storeKey); db={divisions:[],teams:[],players:[],games:[]}; save(); }});
 
-      // Sorting handlers already attached above.
+      // Admin Settings — Passcode
+      $('#passForm').addEventListener('submit', e=>{
+        e.preventDefault();
+        const a=$('#newPass').value.trim();
+        const b=$('#confirmPass').value.trim();
+        if(a.length<4) return alert('Passcode must be at least 4 characters.');
+        if(a!==b) return alert('Passcodes do not match.');
+        setAdminPasscode(a);
+        sessionStorage.removeItem('adminAuth');
+        $('#newPass').value=''; $('#confirmPass').value='';
+        alert('Passcode updated. You will need it next time you open Admin.');
+      });
+      $('#requirePass').addEventListener('click', ()=>{ sessionStorage.removeItem('adminAuth'); alert('This tab will ask for the passcode next time you open Admin.'); });
+      $('#logoutAdmin').addEventListener('click', ()=>{ sessionStorage.removeItem('adminAuth'); location.hash = '#home'; alert('Logged out of Admin for this tab.'); });
     }
 
-    function onRouteChange() {
-      const hash = routeFromHash();
-      showSection(hash);
-      renderAll();
-      setMetaForRoute(hash);
-    }
-
-    function renderAll() {
-      // Shared
-      $('#year').textContent = new Date().getFullYear();
-
-      // Panels
-      renderHomeNextGames();
-      renderLeaders();
-      renderRegistrationForm();
-      renderSchedule();
-      renderStandings();
-      renderStats();
-      renderTeams();
-      renderDivisionsAdmin();
-      renderTeamsAdmin();
-      renderRecordSelect();
-    }
+    function onRouteChange(){ const hash=routeFromHash(); showSection(hash); renderAll(); setMetaForRoute(hash); }
+    function renderAll(){ $('#year').textContent = new Date().getFullYear(); renderHomeNextGames(); renderLeaders(); renderRegistrationForm(); renderSchedule(); renderStandings(); renderStats(); renderTeams(); renderDivisionsAdmin(); renderTeamsAdmin(); renderRecordSelect(); }
 
     // INIT
-    load();
-    bindEvents();
-    onRouteChange();
-
+    load(); bindEvents(); onRouteChange();
   </script>
 </body>
 </html>
