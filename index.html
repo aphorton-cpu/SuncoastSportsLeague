@@ -21,29 +21,28 @@
 
   <style>
     :root {
-  --bg: #0b0c10;         /* deep gray background */
-  --panel: #1f2833;      /* dark navy/gray panel */
-  --muted: #2e3a47;      /* muted bluish-gray */
-  --text: #f3f4f6;       /* light gray text */
-  --subtext: #9ca3af;    /* soft gray */
-  --brand: #3b82f6;      /* primary blue */
-  --accent: #60a5fa;     /* lighter accent blue */
-  --warn: #facc15;       /* keep yellow for warnings */
-  --danger: #ef4444;     /* keep red for errors */
-  --ok: #22c55e;         /* keep green for success */
+  --bg: #f9fafb;         /* light gray background */
+  --panel: #ffffff;      /* white panels/cards */
+  --muted: #e5e7eb;      /* light muted gray for borders */
+  --text: #111827;       /* dark gray for main text */
+  --subtext: #4b5563;    /* medium gray for secondary text */
+  --brand: #2563eb;      /* strong blue */
+  --accent: #3b82f6;     /* lighter accent blue */
+  --warn: #facc15;       /* yellow for warnings */
+  --danger: #ef4444;     /* red for errors */
+  --ok: #22c55e;         /* green for success */
   --rounded: 18px;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --shadow: 0 6px 16px rgba(0,0,0,.08);
 }
 
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
-      margin: 0;
-      font: 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-      color: var(--text);
-      background: linear-gradient(180deg, #000, #0b0b0b 160px) fixed;
-    }
-
+  margin: 0;
+  font: 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--text);
+  background: var(--bg);   /* switch from dark gradient to light solid */
+}
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
